@@ -89,9 +89,11 @@ export const App: React.FC = () => {
       .finally(() => setLoadingTodoId(null));
   };
 
-  const deleteCompletedTodos = () => {
-    complitedTodos.map(todo => deleteTodo(todo.id));
-  };
+  const deleteCompletedTodos = async () => {
+  await Promise.all(
+    complitedTodos.map(todo => deleteTodo(todo.id))
+  );
+};
 
   return (
     <div className="todoapp">
