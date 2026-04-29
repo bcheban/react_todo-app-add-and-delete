@@ -7,6 +7,8 @@ type Props = {
   status: Status;
   setStatus: (value: Status) => void;
   deleteCompletedTodos: () => void;
+  selectedCount: number;
+  deleteSelectedTodos: () => void;
 };
 
 export const Footer: React.FC<Props> = ({
@@ -15,6 +17,8 @@ export const Footer: React.FC<Props> = ({
   status,
   setStatus,
   deleteCompletedTodos,
+  selectedCount,
+  deleteSelectedTodos,
 }) => {
   return (
     <footer className="todoapp__footer" data-cy="Footer">
@@ -67,6 +71,17 @@ export const Footer: React.FC<Props> = ({
         onClick={deleteCompletedTodos}
       >
         Clear completed
+      </button>
+
+      {/* this button should be disabled if there are no selected todos */}
+      <button
+        type="button"
+        className="todoapp__delete-selected"
+        data-cy="DeleteSelectedButton"
+        disabled={selectedCount === 0}
+        onClick={deleteSelectedTodos}
+      >
+        Delete selected ({selectedCount})
       </button>
     </footer>
   );

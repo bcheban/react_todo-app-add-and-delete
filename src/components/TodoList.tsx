@@ -6,6 +6,8 @@ type Props = {
   onDelete: (todoId: number) => void;
   tempTodo: Todo | null;
   loadingTodoId: number | null;
+  selectedTodos: number[];
+  onSelectTodo: (todoId: number) => void;
 };
 
 export const TodoList: React.FC<Props> = ({
@@ -13,6 +15,8 @@ export const TodoList: React.FC<Props> = ({
   onDelete,
   tempTodo,
   loadingTodoId,
+  selectedTodos,
+  onSelectTodo,
 }) => {
   return (
     <section className="todoapp__main" data-cy="TodoList">
@@ -22,6 +26,8 @@ export const TodoList: React.FC<Props> = ({
           todo={todo}
           onDelete={onDelete}
           loadingTodoId={loadingTodoId}
+          isSelected={selectedTodos.includes(todo.id)}
+          onSelect={onSelectTodo}
         />
       ))}
 
@@ -30,6 +36,7 @@ export const TodoList: React.FC<Props> = ({
           todo={tempTodo}
           onDelete={onDelete}
           loadingTodoId={tempTodo.id}
+          isSelected={false}
         />
       )}
     </section>

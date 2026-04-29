@@ -41,6 +41,7 @@ export const App: React.FC = () => {
   const [status, setStatus] = useState<Status>(Status.All);
   const [errorMessage, setErrorMessage] = useState(ErrorMessage.Default);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
+  const [selectedTodos, setSelectedTodos] = useState<number[]>([]);
 
   useEffect(() => {
     setErrorMessage(ErrorMessage.Default);
@@ -90,10 +91,21 @@ export const App: React.FC = () => {
   };
 
   const deleteCompletedTodos = async () => {
-  await Promise.all(
-    complitedTodos.map(todo => deleteTodo(todo.id))
-  );
-};
+    await Promise.all(complitedTodos.map(todo => deleteTodo(todo.id)));
+  };
+
+  const toggleSelectTodo = (todoId: number) => {
+    setSelectedTodos(prevSelected =>
+      prevSelected.includes(todoId)
+        ? prevSelected.filter(id => id !== todoId)
+        : [...prevSelected, todoId],
+    );
+  };
+
+  const deleteSelectedTodos = async () => {
+    await Promise.all(selectedTodos.map(todoId => deleteTodo(todoId)));
+    setSelectedTodos([]);
+  };
 
   return (
     <div className="todoapp">
@@ -116,6 +128,8 @@ export const App: React.FC = () => {
             onDelete={deleteTodo}
             tempTodo={tempTodo}
             loadingTodoId={loadingTodoId}
+            selectedTodos={selectedTodos}
+            onSelectTodo={toggleSelectTodo}
           />
         )}
 
@@ -127,6 +141,8 @@ export const App: React.FC = () => {
             status={status}
             setStatus={setStatus}
             deleteCompletedTodos={deleteCompletedTodos}
+            selectedCount={selectedTodos.length}
+            deleteSelectedTodos={deleteSelectedTodos}
           />
         )}
       </div>
