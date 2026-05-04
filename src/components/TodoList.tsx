@@ -4,19 +4,17 @@ import { TodoItem } from './TodoItem';
 type Props = {
   visibleTodos: Todo[];
   onDelete: (todoId: number) => void;
+  onToggleStatus: (id: number) => void;
   tempTodo: Todo | null;
   loadingTodoId: number | null;
-  selectedIds: number[];
-  onToggleSelect: (todoId: number) => void;
 };
 
 export const TodoList: React.FC<Props> = ({
   visibleTodos,
   onDelete,
+  onToggleStatus,
   tempTodo,
   loadingTodoId,
-  selectedIds,
-  onToggleSelect,
 }) => {
   return (
     <section className="todoapp__main" data-cy="TodoList">
@@ -25,9 +23,8 @@ export const TodoList: React.FC<Props> = ({
           key={todo.id}
           todo={todo}
           onDelete={onDelete}
+          onToggleStatus={onToggleStatus}
           loadingTodoId={loadingTodoId}
-          isSelected={selectedIds.includes(todo.id)}
-          onToggleSelect={onToggleSelect}
         />
       ))}
 
@@ -35,9 +32,8 @@ export const TodoList: React.FC<Props> = ({
         <TodoItem
           todo={tempTodo}
           onDelete={onDelete}
+          onToggleStatus={onToggleStatus}
           loadingTodoId={tempTodo.id}
-          isSelected={false}
-          onToggleSelect={onToggleSelect}
         />
       )}
     </section>

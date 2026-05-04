@@ -8,6 +8,7 @@ import {
   USER_ID,
   getTodos,
   createTodo,
+  updateTodo,
   deleteTodo as deleteTodoAPI,
 } from './api/todos';
 
@@ -27,7 +28,6 @@ export const App: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [processingIds, setProcessingIds] = useState<number[]>([]);
   const [shouldFocus, setShouldFocus] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -114,17 +114,27 @@ export const App: React.FC = () => {
     });
   };
 
-  const handleToggleSelect = (id: number) => {
-    setSelectedIds(prev =>
-      prev.includes(id)
-        ? prev.filter(selectedId => selectedId !== id)
-        : [...prev, id],
-    );
-  };
+  const handleToggleStatus = (id: number) => {
+    const todo = todos.find(t => t.id === id);
 
-  const handleDeleteSelected = () => {
-    selectedIds.forEach(id => handleDelete(id));
-    setSelectedIds([]);
+    if (!todo) {
+      return;
+    }
+
+    setProcessingIds(prev => [...prev, id]);
+
+    const updatedTodo: Todo = { ...todo, completed: !todo.completed };
+
+    updateTodo(id, { completed: !todo.completed })
+      .then(() => {
+        setTodos(prev => prev.map(t => (t.id === id ? updatedTodo : t)));
+      })
+      .catch(() => {
+        showError('Unable to update todo');
+      })
+      .finally(() => {
+        setProcessingIds(prev => prev.filter(pid => pid !== id));
+      });
   };
 
   const filteredTodos = todos.filter(todo => {
@@ -140,13 +150,6 @@ export const App: React.FC = () => {
   });
 
   const visibleTodos = tempTodo ? [...filteredTodos, tempTodo] : filteredTodos;
-
-  useEffect(() => {
-    // Clear selected IDs when filter changes or when selected todos are no longer visible
-    setSelectedIds(prev =>
-      prev.filter(id => filteredTodos.some(todo => todo.id === id)),
-    );
-  }, [filter, todos, filteredTodos]);
 
   const activeCount = todos.filter(t => !t.completed).length;
   const hasCompleted = todos.some(todo => todo.completed);
@@ -187,10 +190,9 @@ export const App: React.FC = () => {
           <TodoList
             visibleTodos={filteredTodos}
             onDelete={handleDelete}
+            onToggleStatus={handleToggleStatus}
             tempTodo={tempTodo}
             loadingTodoId={processingIds.length > 0 ? processingIds[0] : null}
-            selectedIds={selectedIds}
-            onToggleSelect={handleToggleSelect}
           />
         )}
 
@@ -242,17 +244,6 @@ export const App: React.FC = () => {
             >
               Clear completed
             </button>
-
-            {selectedIds.length > 0 && (
-              <button
-                type="button"
-                className="todoapp__delete-selected"
-                data-cy="DeleteSelectedButton"
-                onClick={handleDeleteSelected}
-              >
-                Delete selected ({selectedIds.length})
-              </button>
-            )}
           </footer>
         )}
       </div>

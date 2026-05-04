@@ -6,17 +6,15 @@ import { Todo } from '../types/Todo';
 type Props = {
   todo: Todo;
   onDelete: (todoId: number) => void;
+  onToggleStatus: (id: number) => void;
   loadingTodoId: number | null;
-  isSelected: boolean;
-  onToggleSelect: (todoId: number) => void;
 };
 
 export const TodoItem: React.FC<Props> = ({
   todo,
   onDelete,
+  onToggleStatus,
   loadingTodoId,
-  isSelected,
-  onToggleSelect,
 }) => {
   return (
     <div
@@ -26,21 +24,9 @@ export const TodoItem: React.FC<Props> = ({
         'todo',
         {
           completed: todo.completed,
-          selected: isSelected,
         },
       ])}
     >
-      <label htmlFor={`todo-select-${todo.id}`} className="todo__select-label">
-        <input
-          id={`todo-select-${todo.id}`}
-          data-cy="TodoSelect"
-          type="checkbox"
-          className="todo__select"
-          checked={isSelected}
-          onChange={() => onToggleSelect(todo.id)}
-        />
-      </label>
-
       <label htmlFor={`todo-status-${todo.id}`} className="todo__status-label">
         <input
           id={`todo-status-${todo.id}`}
@@ -48,6 +34,7 @@ export const TodoItem: React.FC<Props> = ({
           type="checkbox"
           className="todo__status"
           checked={todo.completed}
+          onChange={() => onToggleStatus(todo.id)}
         />
       </label>
 
