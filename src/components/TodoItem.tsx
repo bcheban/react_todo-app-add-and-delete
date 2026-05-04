@@ -7,16 +7,16 @@ type Props = {
   todo: Todo;
   onDelete: (todoId: number) => void;
   loadingTodoId: number | null;
-  isSelected?: boolean;
-  onSelect?: (todoId: number) => void;
+  isSelected: boolean;
+  onToggleSelect: (todoId: number) => void;
 };
 
 export const TodoItem: React.FC<Props> = ({
   todo,
   onDelete,
   loadingTodoId,
-  isSelected = false,
-  onSelect,
+  isSelected,
+  onToggleSelect,
 }) => {
   return (
     <div
@@ -37,7 +37,7 @@ export const TodoItem: React.FC<Props> = ({
           type="checkbox"
           className="todo__select"
           checked={isSelected}
-          onChange={() => onSelect?.(todo.id)}
+          onChange={() => onToggleSelect(todo.id)}
         />
       </label>
 
